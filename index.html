@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>GO $LONG</title>
+    <link rel="icon" type="image/gif" href="assets/items/COIN.gif">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #000;
+            height: -webkit-fill-available;
+        }
+        
+        #gamecontainer {
+            width: 100vw;
+            height: 100vh;
+            height: -webkit-fill-available;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background: linear-gradient(to bottom, 
+                rgba(252, 160, 73, 0.1) 0%, 
+                transparent 20%, 
+                transparent 80%, 
+                rgba(252, 160, 73, 0.1) 100%);
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        }
+        
+        #gamescreen {
+            width: 100%;
+            height: 100%;
+        }
+        
+        @media (min-width: 601px) {
+            #sky {
+                height: 90% !important;
+            }
+            
+            #land {
+                height: 10% !important;
+            }
+            
+            #flyarea {
+                height: 90vh !important;
+            }
+        }
+        
+        #gamecontainer::before,
+        #gamecontainer::after {
+            content: '';
+            position: fixed;
+            width: 50px;
+            height: 50px;
+            border: 3px solid transparent;
+            z-index: 2;
+        }
+        
+        #gamecontainer::before {
+            top: 10px;
+            left: 10px;
+            border-right: none;
+            border-bottom: none;
+        }
+        
+        #gamecontainer::after {
+            bottom: 10px;
+            right: 10px;
+            border-left: none;
+            border-top: none;
+        }
+        
+    </style>
+</head>
+<body>
+    <div id="gamecontainer">
+        <div id="gamescreen">
+            <div id="sky" class="animated">
+                <div id="flyarea">
+                    <canvas id="gameCanvas"></canvas>
+                    <div id="bigscore"></div>
+                    <div id="gameControls" style="position: absolute; top: 10px; left: 10px; z-index: 200; display: none;">
+                        <button id="pauseButton" class="game-control-btn">
+                            <span style="font-family: 'Press Start 2P', monospace; font-size: 10px; color: #46DDB1;">| |</span>
+                        </button>
+                    </div>
+                    <div id="pauseOverlay" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 150; pointer-events: auto;">
+                        <div class="pause-menu">
+                            <h2 class="pause-title">GAME PAUSED</h2>
+                            <p class="pause-subtitle">Press ESC to Resume</p>
+                            <div class="pause-divider"></div>
+                            <div class="pause-option">
+                                <span class="pause-label">MUSIC</span>
+                                <button id="musicToggle" class="pause-toggle">
+                                    <span class="toggle-text music-text">ON</span>
+                                </button>
+                            </div>
+                            <div class="pause-option">
+                                <span class="pause-label">SFX</span>
+                                <button id="soundToggle" class="pause-toggle">
+                                    <span class="toggle-text sound-text">ON</span>
+                                </button>
+                            </div>
+                            <div class="pause-divider"></div>
+                            <button id="resumeButton" class="pause-resume-btn">RESUME GAME</button>
+                        </div>
+                    </div>
+                    <div id="startscreen">
+                        <div class="start-content">
+                            <div class="start-title">
+                                <img src="assets/ui/GO $LONG.gif" alt="GO $LONG" class="title-logo">
+                            </div>
+                            <div class="start-character">
+                                <img src="assets/characters/MAIN CHARACTER.gif" alt="Character" class="character-gif">
+                            </div>
+                            <div class="start-play">
+                                <div id="startplaybutton"></div>
+                            </div>
+                            <div class="start-leaderboard-title">
+                                <img src="assets/ui/LEADERBOARD.png" alt="Leaderboard" style="max-width: 200px; height: auto; display: block; margin: 0 auto;">
+                            </div>
+                            <div class="start-leaderboard">
+                            <table id="startLeaderboardTable">
+                                <thead>
+                                    <tr>
+                                        <th class="trophy-col"></th>
+                                        <th>#</th>
+                                        <th>Name</th>
+                                        <th>Score</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="startLeaderboardBody"></tbody>
+                            </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="splash">
+                        <div class="logo-section">
+                            <img src="assets/ui/GET READY.gif" alt="Get Ready" class="splash-logo">
+                        </div>
+                    </div>
+                    <div id="scoreboard">
+                        <div id="liquidated"></div>
+                        <div class="scores-section">
+                            <div id="currentscore"></div>
+                            <div id="highscore"></div>
+                        </div>
+                        <div class="score-divider"></div>
+                        <div id="leaderboard-container">
+                            <div class="leaderboard-header">
+                                <img src="assets/ui/LEADERBOARD.png" alt="Leaderboard" style="max-width: 150px; height: auto; display: block;">
+                                <div class="toggle-buttons">
+                                <button id="scoreboardMusicToggle" class="music-toggle-btn">
+                                    <span class="music-icon">MUSIC ON</span>
+                                </button>
+                                <button id="scoreboardSfxToggle" class="music-toggle-btn">
+                                    <span class="music-icon">SFX ON</span>
+                                </button>
+                            </div>
+                                </div>
+                            <div class="leaderboard-scroll">
+                                <table id="leaderboardTable">
+                                    <thead>
+                                        <tr>
+                                            <th class="trophy-col"></th>
+                                            <th>#</th>
+                                            <th>Name</th>
+                                            <th>Score</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="leaderboardBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="score-divider"></div>
+                        <div class="buttons-section">
+                            <div id="replay"></div>
+                            <div id="sharebutton"></div>
+                            <div id="buylongbutton"></div>
+                        </div>
+                        <div id="medal"></div>
+                    </div>
+                    <div id="hud">
+                        <div class="hud-item"><span id="currentCoins">0</span></div>
+                    </div>
+                </div>
+            </div>
+            <div id="land" class="animated"></div>
+        </div>
+    </div>
+    <div id="nameInputModal" style="display: none;">
+        <div class="name-modal-content">
+            <h2>TOP 10!</h2>
+            <p>Enter your name for the leaderboard:</p>
+            <input type="text" id="playerNameInput" maxlength="20" placeholder="Your Name" autocomplete="off" inputmode="text" autocapitalize="words">
+            <button id="submitNameBtn">Submit</button>
+        </div>
+    </div>
+    <script>
+        window.DESIGN_CONFIG = {
+            birdSize: 110,
+            birdWidth: 110,
+            birdHeight: 110,
+            pipeWidth: 160,
+            coinSize: 65,
+            enemySize: 120
+        };
+        window.SUPABASE_URL = 'https://sglmxxfuybzbojvqbkcv.supabase.co';
+        window.SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNnbG14eGZ1eWJ6Ym9qdnFia2N2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI3NjA3MTksImV4cCI6MjA3ODMzNjcxOX0.zlaz7uzlj2o8iqso5DY4fa9s_Vudko6Yf-Yk3Fu_g0c';
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="collision-system.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
