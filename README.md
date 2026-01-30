@@ -1,12 +1,12 @@
-# Go‑Long 🏈
-A tiny browser‑based football dodging game built with vanilla JavaScript, HTML, and CSS.
+# Go‑Long 🐤
+A tiny browser‑based Flappy bird game built with vanilla JavaScript, HTML and CSS.
 
 Play it live: https://go-long.vercel.app
 
 ---
 
 ## Overview
-Go‑Long is a lightweight arcade-style browser game where you dodge defenders while running downfield.  
+Go‑Long is a lightweight flappy bird browser game where you dodge defenders while running downfield.  
 The project is intentionally simple — no frameworks, no build tools — just pure front‑end code.
 
 ---
